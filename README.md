@@ -46,8 +46,6 @@ Click the extension icon to configure:
 - **Badge:** last update time, star count, archived label
 - **Tooltip:** description, last push, created date, stars, forks, open issues, language, license, topics
 
-![Settings](./screenshots/settings.png)
-
 **GitHub Token** — optional but recommended for large pages:
 
 | | Without token | With token |
