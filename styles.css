@@ -1,3 +1,21 @@
+/* ── Loader spinner ────────────────────────────────────── */
+
+.grc-loader {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  vertical-align: middle;
+  border: 2px solid #e5e7eb;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: grc-spin 0.6s linear infinite;
+}
+
+@keyframes grc-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── GitHub Repo Checker Badge ─────────────────────────── */
 
 .grc-badge {

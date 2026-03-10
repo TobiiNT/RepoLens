@@ -5,7 +5,7 @@
   const BATCH_SIZE = 30;
   const BATCH_DELAY_MS = 100;
   const CACHE_TTL_MS = 30 * 60 * 1000;
-  const REPO_REGEX = /github\.com\/([a-zA-Z0-9\-_.]+)\/([a-zA-Z0-9\-_.]+)/;
+  const REPO_REGEX = /^https?:\/\/github\.com\/([a-zA-Z0-9\-_.]+)\/([a-zA-Z0-9\-_.]+)\/?(?:[#?].*)?$/;
   const PROCESSED_ATTR = "data-grc-processed";
 
   const DEFAULT_DISPLAY = {
@@ -245,17 +245,31 @@
     return results;
   }
 
+  function createLoader() {
+    const el = document.createElement("span");
+    el.className = "grc-loader";
+    return el;
+  }
+
   async function processPage() {
     const entries = extractRepoLinks();
     if (!entries.length) return;
     const token = await getToken();
 
+    // Insert loaders immediately
+    for (const entry of entries) {
+      const loader = createLoader();
+      entry.link.parentNode.insertBefore(loader, entry.link.nextSibling);
+      entry.loader = loader;
+    }
+
+    // Fetch and replace loaders with badges
     for (let i = 0; i < entries.length; i += BATCH_SIZE) {
       const batch = entries.slice(i, i + BATCH_SIZE);
-      await Promise.all(batch.map(({ link, owner, repo }) =>
+      await Promise.all(batch.map(({ link, owner, repo, loader }) =>
         fetchRepo(owner, repo, token).then(data => {
-          if (!data) return;
-          link.parentNode.insertBefore(createBadge(data), link.nextSibling);
+          if (!data) { loader.remove(); return; }
+          loader.replaceWith(createBadge(data));
         })
       ));
       if (i + BATCH_SIZE < entries.length)
