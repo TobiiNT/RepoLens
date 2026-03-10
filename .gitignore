@@ -1,0 +1,5 @@
+*.pem
+*.crx
+*.zip
+.DS_Store
+generate_icons.py

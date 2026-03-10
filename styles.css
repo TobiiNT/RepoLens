@@ -1,0 +1,205 @@
+/* ── GitHub Repo Checker Badge ─────────────────────────── */
+
+.grc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  line-height: 18px;
+  vertical-align: middle;
+  cursor: default;
+  position: relative;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.grc-badge:hover {
+  opacity: 0.9;
+  z-index: 999999;
+}
+
+/* ── Freshness Colors ─────────────────────────────────── */
+
+.grc-fresh {
+  background: #dafbe1;
+  color: #116329;
+  border: 1px solid #a7f3d0;
+}
+
+.grc-aging {
+  background: #fff8c5;
+  color: #735c0f;
+  border: 1px solid #fde68a;
+}
+
+.grc-stale {
+  background: #ffebe9;
+  color: #82071e;
+  border: 1px solid #fca5a5;
+}
+
+.grc-archived {
+  background: #e5e7eb;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.grc-not-found {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+  text-decoration: line-through;
+}
+
+.grc-rate-limited {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.grc-error {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+}
+
+/* ── Stars Pill ───────────────────────────────────────── */
+
+.grc-stars {
+  font-size: 10px;
+  opacity: 0.8;
+  margin-left: 2px;
+}
+
+/* ── Label (for archived) ─────────────────────────────── */
+
+.grc-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Tooltip ──────────────────────────────────────────── */
+
+.grc-tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  background: #1f2937;
+  color: #f9fafb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  min-width: 260px;
+  max-width: 380px;
+  white-space: normal;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.grc-tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #1f2937;
+}
+
+.grc-badge:hover .grc-tooltip {
+  display: block;
+}
+
+/* ── Tooltip internals ────────────────────────────────── */
+
+.grc-tt-header {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #fff;
+  word-break: break-all;
+}
+
+.grc-tt-desc {
+  font-size: 11px;
+  color: #d1d5db;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.grc-tt-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.grc-tt-topic {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  background: #1e3a5f;
+  color: #58a6ff;
+  border: 1px solid #264d73;
+  line-height: 16px;
+}
+
+.grc-tt-divider {
+  height: 1px;
+  background: #374151;
+  margin: 6px 0;
+}
+
+.grc-tt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+  font-size: 11px;
+}
+
+.grc-tt-row span:first-child {
+  color: #9ca3af;
+}
+
+.grc-tt-row span:last-child {
+  color: #f3f4f6;
+  font-weight: 500;
+}
+
+.grc-tt-archived {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #374151;
+  color: #f87171;
+  font-weight: 500;
+  font-size: 11px;
+}
+
+/* ── Dark mode (GitHub) ───────────────────────────────── */
+
+[data-color-mode="dark"] .grc-fresh, .dark .grc-fresh {
+  background: #06311e; color: #7ee787; border-color: #238636;
+}
+[data-color-mode="dark"] .grc-aging, .dark .grc-aging {
+  background: #3d2e00; color: #e3b341; border-color: #9e6a03;
+}
+[data-color-mode="dark"] .grc-stale, .dark .grc-stale {
+  background: #3d0912; color: #f85149; border-color: #da3633;
+}
+[data-color-mode="dark"] .grc-archived, .dark .grc-archived {
+  background: #2d333b; color: #8b949e; border-color: #444c56;
+}
