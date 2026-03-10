@@ -4,8 +4,7 @@
 
 Ever browsed an awesome list with 500 repos and wondered which ones are still maintained? This extension scans every GitHub link on the page and injects a color-coded badge right next to it. No clicking. No new tabs. Just glance and know.
 
-<!-- TODO: replace with actual screenshot -->
-<!-- ![Screenshot](./screenshots/demo.png) -->
+![RepoLens in action](./screenshots/demo.png)
 
 ## How it looks
 
@@ -31,7 +30,7 @@ Every GitHub repo link on any page gets a badge:
 ### Manual (Developer Mode)
 
 ```
-git clone https://github.com/YOUR_USERNAME/repolens.git
+git clone https://github.com/TobiiNT/repolens.git
 ```
 
 1. Open `chrome://extensions/`
@@ -47,6 +46,8 @@ Click the extension icon to configure:
 - **Badge:** last update time, star count, archived label
 - **Tooltip:** description, last push, created date, stars, forks, open issues, language, license, topics
 
+![Settings](./screenshots/settings.png)
+
 **GitHub Token** — optional but recommended for large pages:
 
 | | Without token | With token |
@@ -55,6 +56,8 @@ Click the extension icon to configure:
 | Awesome list (200 repos) | ❌ Throttled | ✅ Instant |
 
 To create a token: [GitHub Settings → Fine-grained tokens](https://github.com/settings/tokens?type=beta) → no special permissions needed (public repo metadata is default).
+
+![Token setup](./screenshots/token.png)
 
 ## Features
 
@@ -103,6 +106,7 @@ repolens/
 ├── popup.html        # Settings UI
 ├── popup.js          # Settings logic (token, toggles)
 ├── icons/            # Extension icons (16, 48, 128)
+├── screenshots/      # README images
 └── README.md
 ```
 
