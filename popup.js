@@ -10,12 +10,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const displayToggles = document.querySelectorAll("[data-key]");
 
   // ── Load saved settings ───────────────────────────────
+  let savedToken = "";
   try {
     const result = await chrome.storage.sync.get(["github_pat", "enabled", "display"]);
 
     if (result.github_pat) {
-      tokenInput.value = result.github_pat;
-      rateText.textContent = "5,000 req/hour (authenticated)";
+      savedToken = result.github_pat;
+      tokenInput.value = savedToken;
+      saveBtn.disabled = true;
+      fetchRateLimit(savedToken);
     }
 
     if (result.enabled === false) {
@@ -32,6 +35,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   } catch {}
+
+  // ── Sync button state with input ──────────────────────
+  tokenInput.addEventListener("input", () => {
+    saveBtn.disabled = tokenInput.value.trim() === savedToken;
+  });
 
   // ── Display toggles — save on change ──────────────────
   for (const toggle of displayToggles) {
@@ -60,43 +68,66 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
   });
 
+  // ── Fetch & display rate limit ────────────────────────
+  async function fetchRateLimit(token) {
+    rateText.textContent = "Checking…";
+    try {
+      const res = await fetch("https://api.github.com/rate_limit", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const remaining = data.resources.core.remaining;
+        const limit = data.resources.core.limit;
+        rateText.textContent = `${remaining.toLocaleString()} / ${limit.toLocaleString()} remaining`;
+        return { ok: true, remaining, limit };
+      } else if (res.status === 401) {
+        rateText.textContent = "60 req/hour (no token)";
+        return { ok: false, status: 401 };
+      } else {
+        rateText.textContent = "60 req/hour (no token)";
+        return { ok: false, status: res.status };
+      }
+    } catch (err) {
+      rateText.textContent = "60 req/hour (no token)";
+      return { ok: false, error: err.message };
+    }
+  }
+
   // ── Save token ────────────────────────────────────────
   saveBtn.addEventListener("click", async () => {
     const token = tokenInput.value.trim();
 
     if (!token) {
       await chrome.storage.sync.remove("github_pat");
+      savedToken = "";
       rateText.textContent = "60 req/hour (no token)";
+      saveBtn.disabled = true;
       showStatus("info", "Token removed.");
       return;
     }
 
-    saveBtn.textContent = "Validating...";
+    saveBtn.textContent = "Validating…";
     saveBtn.disabled = true;
 
-    try {
-      const res = await fetch("https://api.github.com/rate_limit", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const result = await fetchRateLimit(token);
 
-      if (res.ok) {
-        const data = await res.json();
-        const remaining = data.resources.core.remaining;
-        const limit = data.resources.core.limit;
-        await chrome.storage.sync.set({ github_pat: token });
-        rateText.textContent = `${remaining.toLocaleString()} / ${limit.toLocaleString()} remaining`;
-        showStatus("success", `Token saved! ${remaining.toLocaleString()} requests remaining.`);
-      } else if (res.status === 401) {
-        showStatus("error", "Invalid token.");
-      } else {
-        showStatus("error", `GitHub API error: ${res.status}`);
-      }
-    } catch (err) {
-      showStatus("error", `Network error: ${err.message}`);
+    if (result.ok) {
+      await chrome.storage.sync.set({ github_pat: token });
+      savedToken = token;
+      showStatus("success", `Token saved! ${result.remaining.toLocaleString()} requests remaining.`);
+    } else if (result.status === 401) {
+      showStatus("error", "Invalid token.");
+      saveBtn.disabled = false;
+    } else if (result.error) {
+      showStatus("error", `Network error: ${result.error}`);
+      saveBtn.disabled = false;
+    } else {
+      showStatus("error", `GitHub API error: ${result.status}`);
+      saveBtn.disabled = false;
     }
 
     saveBtn.textContent = "Save Token";
-    saveBtn.disabled = false;
   });
 
   // ── Status helper ─────────────────────────────────────

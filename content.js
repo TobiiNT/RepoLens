@@ -37,8 +37,19 @@
   // Live-reload settings
   try {
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === "sync" && changes.display) {
+      if (area !== "sync") return;
+      if (changes.display) {
         displaySettings = { ...DEFAULT_DISPLAY, ...changes.display.newValue };
+      }
+      if (changes.github_pat) {
+        const newToken = changes.github_pat.newValue || "";
+        document
+          .querySelectorAll(".grc-rate-limited[data-grc-repo]")
+          .forEach(async (badge) => {
+            const [owner, repo] = badge.dataset.grcRepo.split("/");
+            const data = await fetchRepo(owner, repo, newToken);
+            if (data) badge.replaceWith(createBadge(data));
+          });
       }
     });
   } catch {}
@@ -217,6 +228,14 @@
     tt.innerHTML = buildTooltip(data);
     el.appendChild(tt);
 
+    // Flip tooltip above badge if it would overflow the viewport bottom
+    el.addEventListener("mouseenter", () => {
+      const badgeRect = el.getBoundingClientRect();
+      const ttHeight = tt.offsetHeight || 200; // estimate if not yet painted
+      const spaceBelow = window.innerHeight - badgeRect.bottom;
+      el.classList.toggle("grc-flip", spaceBelow < ttHeight + 10);
+    });
+
     return el;
   }
 
@@ -280,6 +299,13 @@
       `a[href*="github.com"]:not([${PROCESSED_ATTR}])`,
     );
     const results = [];
+
+    // Skip links pointing to the same repo as the current page
+    const pageMatch = location.href.match(REPO_REGEX);
+    const pageRepo = pageMatch
+      ? `${pageMatch[1].toLowerCase()}/${pageMatch[2].toLowerCase().replace(/\.git$/, "").split("/")[0].split("#")[0].split("?")[0]}`
+      : null;
+
     const skipOwners = new Set([
       "topics",
       "explore",
@@ -312,7 +338,9 @@
         .split("/")[0]
         .split("#")[0]
         .split("?")[0];
+      const repoKey = `${owner.toLowerCase()}/${repo.toLowerCase()}`;
       if (skipOwners.has(owner.toLowerCase()) || !repo) continue;
+      if (pageRepo && repoKey === pageRepo) continue;
       link.setAttribute(PROCESSED_ATTR, "1");
       results.push({ link, owner, repo });
     }
@@ -347,7 +375,9 @@
               loader.remove();
               return;
             }
-            loader.replaceWith(createBadge(data));
+            const badge = createBadge(data);
+            if (data.rateLimited) badge.dataset.grcRepo = `${owner}/${repo}`;
+            loader.replaceWith(badge);
           }),
         ),
       );

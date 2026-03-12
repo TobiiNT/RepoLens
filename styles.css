@@ -139,6 +139,19 @@
   display: block;
 }
 
+/* Flip tooltip above badge when near viewport bottom */
+.grc-badge.grc-flip .grc-tooltip {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+.grc-badge.grc-flip .grc-tooltip::before {
+  bottom: auto;
+  top: 100%;
+  border-bottom-color: transparent;
+  border-top-color: #1f2937;
+}
+
 /* ── Tooltip internals ────────────────────────────────── */
 
 .grc-tt-header {

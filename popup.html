@@ -161,7 +161,8 @@
     transition: background 0.15s;
   }
 
-  .btn:hover { background: #4338ca; }
+  .btn:hover:not(:disabled) { background: #4338ca; }
+  .btn:disabled { background: #a5b4fc; cursor: default; }
 
   .status {
     margin-top: 10px;
