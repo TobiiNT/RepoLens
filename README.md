@@ -2,6 +2,8 @@
 
 **Instantly see which GitHub repos are alive, stale, or dead — on any webpage.**
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/omabnpgcahgllmgpkblinhlfkjghpnbp?style=for-the-badge&logo=googlechrome&logoColor=white&label=Install%20on%20Chrome)](https://chromewebstore.google.com/detail/repolens/omabnpgcahgllmgpkblinhlfkjghpnbp)
+
 Ever browsed an awesome list with 500 repos and wondered which ones are still maintained? This extension scans every GitHub link on the page and injects a color-coded badge right next to it. No clicking. No new tabs. Just glance and know.
 
 ![RepoLens in action](./screenshots/demo.png)
