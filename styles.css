@@ -10,6 +10,7 @@
   border-top-color: #6366f1;
   border-radius: 50%;
   animation: grc-spin 0.6s linear infinite;
+  user-select: none;
 }
 
 @keyframes grc-spin {
@@ -34,6 +35,7 @@
   position: relative;
   white-space: nowrap;
   transition: opacity 0.15s;
+  user-select: none;
 }
 
 .grc-badge:hover {
@@ -106,15 +108,14 @@
 
 .grc-tooltip {
   display: none;
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
+  position: fixed;
   transform: translateX(-50%);
   z-index: 999999;
   background: #1f2937;
   color: #f9fafb;
   border-radius: 8px;
   padding: 10px 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
@@ -135,17 +136,8 @@
   border-bottom-color: #1f2937;
 }
 
-.grc-badge:hover .grc-tooltip {
-  display: block;
-}
-
-/* Flip tooltip above badge when near viewport bottom */
-.grc-badge.grc-flip .grc-tooltip {
-  top: auto;
-  bottom: calc(100% + 6px);
-}
-
-.grc-badge.grc-flip .grc-tooltip::before {
+/* Flip arrow when tooltip is above badge */
+.grc-tooltip.grc-flip::before {
   bottom: auto;
   top: 100%;
   border-bottom-color: transparent;

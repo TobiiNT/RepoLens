@@ -96,7 +96,23 @@
     d.textContent = str;
     return d.innerHTML;
   }
-  
+
+  /** Check if an element sits inside a container with a flipping CSS transform */
+  function isInFlippedContainer(el) {
+    let node = el.parentElement;
+    while (node && node !== document.body) {
+      const t = getComputedStyle(node).transform;
+      if (t && t !== "none") {
+        try {
+          const m = new DOMMatrix(t);
+          if (m.a < -0.5 || m.d < -0.5) return true;
+        } catch {}
+      }
+      node = node.parentElement;
+    }
+    return false;
+  }
+
   // ── Cache ───────────────────────────────────────────────
   const mem = new Map();
 
@@ -222,18 +238,31 @@
       el.appendChild(sp);
     }
 
-    // Tooltip
+    // Tooltip — appended to body on hover to escape overflow:hidden containers
     const tt = document.createElement("div");
     tt.className = "grc-tooltip";
     tt.innerHTML = buildTooltip(data);
     el.appendChild(tt);
 
-    // Flip tooltip above badge if it would overflow the viewport bottom
     el.addEventListener("mouseenter", () => {
-      const badgeRect = el.getBoundingClientRect();
-      const ttHeight = tt.offsetHeight || 200; // estimate if not yet painted
-      const spaceBelow = window.innerHeight - badgeRect.bottom;
-      el.classList.toggle("grc-flip", spaceBelow < ttHeight + 10);
+      const rect = el.getBoundingClientRect();
+      document.body.appendChild(tt);
+      tt.style.display = "block";
+
+      const ttHeight = tt.offsetHeight || 200;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const flip = spaceBelow < ttHeight + 10;
+
+      tt.classList.toggle("grc-flip", flip);
+      tt.style.left = rect.left + rect.width / 2 + "px";
+      tt.style.top = flip
+        ? rect.top - ttHeight - 6 + "px"
+        : rect.bottom + 6 + "px";
+    });
+
+    el.addEventListener("mouseleave", () => {
+      tt.style.display = "none";
+      el.appendChild(tt);
     });
 
     return el;
@@ -271,7 +300,7 @@
     if (s.tt_created)
       L.push(
         row(
-          "Last created:",
+          "Created:",
           `${fmtDate(data.created_at)} (${timeAgo(data.created_at)})`,
         ),
       );
@@ -332,6 +361,14 @@
     for (const link of links) {
       const match = link.href.match(REPO_REGEX);
       if (!match) continue;
+      // Skip links inside editable areas (e.g. Gmail compose, rich text editors)
+      if (link.closest('[contenteditable="true"], [contenteditable=""], [role="textbox"]'))
+        continue;
+      // Skip links inside CSS-flipped containers (e.g. Google search breadcrumb area)
+      if (isInFlippedContainer(link)) {
+        link.setAttribute(PROCESSED_ATTR, "1");
+        continue;
+      }
       let [, owner, repo] = match;
       repo = repo
         .replace(/\.git$/, "")

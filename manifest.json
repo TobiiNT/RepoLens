@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "RepoLens",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Scan any webpage for GitHub repo links and see repo health at a glance — last update, stars, archived status, and more.",
   "permissions": ["storage"],
   "host_permissions": ["https://api.github.com/*"],
