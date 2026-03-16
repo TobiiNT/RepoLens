@@ -24,8 +24,7 @@ Every GitHub repo link on any page gets a badge:
 
 ### Chrome Web Store
 
-<!-- TODO: add link after publishing -->
-<!-- [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/...) -->
+[Install from Chrome Web Store](https://chromewebstore.google.com/detail/repolens/omabnpgcahgllmgpkblinhlfkjghpnbp)
 
 ### Manual (Developer Mode)
 
